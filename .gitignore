@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Xcode user-specific
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Build output
+build/
+DerivedData/
+
+# CocoaPods — run `pod install` after cloning (regenerates ios.xcworkspace)
+Pods/
+/ios.xcworkspace/
+
+# Local SDK binary (the SDK is pulled via CocoaPods, not committed)
+binoban.xcframework/
+*.xcframework/

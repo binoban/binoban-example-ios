@@ -1,0 +1,16 @@
+PODS:
+  - binoban (0.1.1)
+
+DEPENDENCIES:
+  - binoban (~> 0.1)
+
+SPEC REPOS:
+  trunk:
+    - binoban
+
+SPEC CHECKSUMS:
+  binoban: a6411bcd11803b85fffc7aea7c23f90b8cdc3282
+
+PODFILE CHECKSUM: 962d8175ddc9187da1244bda3c044c0da0f81070
+
+COCOAPODS: 1.16.2
