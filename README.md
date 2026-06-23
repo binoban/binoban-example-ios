@@ -22,10 +22,10 @@ identity APIs you use to send customer signals into a Binoban deployment.
 
 ## Supported environments
 
-- iOS 12.0+ (the SDK); this example project targets a recent iOS SDK — adjust the
-  deployment target in Xcode to match your minimum supported OS.
-- Xcode 15 or later. (The project was created with Xcode 26.2 beta; lower the
-  deployment target if you build with a stable Xcode.)
+- **Binoban iOS SDK:** iOS **12.0+**. You can lower this example's deployment target to
+  match your app's minimum supported OS, down to iOS 12.0.
+- **This example app:** builds against a deployment target of iOS **15.0** (see `Podfile`).
+- **Xcode 15 or later** (any current stable release).
 - [CocoaPods](https://cocoapods.org) for dependency management.
 
 ## Installation
