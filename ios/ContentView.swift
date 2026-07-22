@@ -38,7 +38,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
                     .background(selectedTab == tab ? Color.accentColor : Color.clear)
                     .foregroundColor(selectedTab == tab ? .white : .accentColor)
-                    .fontWeight(selectedTab == tab ? .bold : .regular)
+                    .font(.body.weight(selectedTab == tab ? .bold : .regular))
                 }
             }
             .background(Color(.systemGray6))

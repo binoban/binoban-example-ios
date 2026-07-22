@@ -1,0 +1,15 @@
+{
+  "originHash" : "c28d2691628f6bad1cb84e060ec6800d5a5fad803930605afd249631d2ae1454",
+  "pins" : [
+    {
+      "identity" : "binoban-sdk-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/binoban/binoban-sdk-swift",
+      "state" : {
+        "revision" : "19cbfe767c3304ff313e33b30f3e8af3ef82e08f",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

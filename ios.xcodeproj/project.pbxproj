@@ -7,13 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F87C8584EFB59658E77A8EF /* Pods_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8C72A25B728C265E01CD29 /* Pods_ios.framework */; };
+		A846038F271CD384F9B43B51 /* binoban in Frameworks */ = {isa = PBXBuildFile; productRef = DF458029959287D6A4B8F797 /* binoban */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5E8C72A25B728C265E01CD29 /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CBEC441D3F0C9CBDB19B040A /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
-		D7BC5EF4BC5433CA0D2ABA6E /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		D8613C052FB350CA00FE509F /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,38 +29,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F87C8584EFB59658E77A8EF /* Pods_ios.framework in Frameworks */,
+				A846038F271CD384F9B43B51 /* binoban in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1F9C08E5326236A1DB5C3FAB /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				5E8C72A25B728C265E01CD29 /* Pods_ios.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CEB08F3EB604F16DF51415B2 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D7BC5EF4BC5433CA0D2ABA6E /* Pods-ios.debug.xcconfig */,
-				CBEC441D3F0C9CBDB19B040A /* Pods-ios.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		D8613BFC2FB350CA00FE509F = {
 			isa = PBXGroup;
 			children = (
 				D8613C072FB350CA00FE509F /* ios */,
 				D8613C062FB350CA00FE509F /* Products */,
-				CEB08F3EB604F16DF51415B2 /* Pods */,
-				1F9C08E5326236A1DB5C3FAB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,7 +59,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8613C102FB350CB00FE509F /* Build configuration list for PBXNativeTarget "ios" */;
 			buildPhases = (
-				A9204152952A007D83AD0537 /* [CP] Check Pods Manifest.lock */,
 				D8613C012FB350CA00FE509F /* Sources */,
 				D8613C022FB350CA00FE509F /* Frameworks */,
 				D8613C032FB350CA00FE509F /* Resources */,
@@ -95,6 +71,9 @@
 				D8613C072FB350CA00FE509F /* ios */,
 			);
 			name = ios;
+			packageProductDependencies = (
+				DF458029959287D6A4B8F797 /* binoban */,
+			);
 			productName = ios;
 			productReference = D8613C052FB350CA00FE509F /* ios.app */;
 			productType = "com.apple.product-type.application";
@@ -123,6 +102,9 @@
 			);
 			mainGroup = D8613BFC2FB350CA00FE509F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				801569BF0D73BEC57651E734 /* XCRemoteSwiftPackageReference "binoban-sdk-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D8613C062FB350CA00FE509F /* Products */;
 			projectDirPath = "";
@@ -142,31 +124,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		A9204152952A007D83AD0537 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ios-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D8613C012FB350CA00FE509F /* Sources */ = {
@@ -300,7 +257,6 @@
 		};
 		D8613C112FB350CB00FE509F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D7BC5EF4BC5433CA0D2ABA6E /* Pods-ios.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -332,7 +288,6 @@
 		};
 		D8613C122FB350CB00FE509F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBEC441D3F0C9CBDB19B040A /* Pods-ios.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -384,6 +339,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		801569BF0D73BEC57651E734 /* XCRemoteSwiftPackageReference "binoban-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/binoban/binoban-sdk-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DF458029959287D6A4B8F797 /* binoban */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 801569BF0D73BEC57651E734 /* XCRemoteSwiftPackageReference "binoban-sdk-swift" */;
+			productName = binoban;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D8613BFD2FB350CA00FE509F /* Project object */;
 }

@@ -7,7 +7,7 @@ Binoban is enterprise CDXP infrastructure for customer data, activation, retail 
 advertising, and decisioning. This example demonstrates the client-side event and
 identity APIs you use to send customer signals into a Binoban deployment.
 
-> **Status:** Reference example · tested against Binoban iOS SDK **0.1.x**.
+> **Status:** Reference example · tested against Binoban iOS SDK **1.0.0**.
 
 ## What it shows
 
@@ -24,24 +24,31 @@ identity APIs you use to send customer signals into a Binoban deployment.
 
 - **Binoban iOS SDK:** iOS **12.0+**. You can lower this example's deployment target to
   match your app's minimum supported OS, down to iOS 12.0.
-- **This example app:** builds against a deployment target of iOS **15.0** (see `Podfile`).
-- **Xcode 15 or later** (any current stable release).
-- [CocoaPods](https://cocoapods.org) for dependency management.
+- **This example app:** builds against a deployment target of iOS **15.0**.
+- **Xcode 15 or later** (Swift tools 5.9+).
+- [Swift Package Manager](https://www.swift.org/package-manager/) for dependency
+  management (built into Xcode — nothing extra to install).
 
 ## Installation
 
-The SDK is distributed via CocoaPods ([cocoapods.org/pods/binoban](https://cocoapods.org/pods/binoban)).
+The SDK is distributed as a Swift package that vends a prebuilt XCFramework
+([github.com/binoban/binoban-sdk-swift](https://github.com/binoban/binoban-sdk-swift)).
+This example already declares the dependency, pinned to an exact version:
+
+```
+https://github.com/binoban/binoban-sdk-swift · Exact Version · 1.0.0
+```
+
+Just open the project and let Xcode resolve packages:
 
 ```sh
-pod install            # fetches the binoban pod and generates ios.xcworkspace
-open ios.xcworkspace   # always open the workspace, not the .xcodeproj
+open ios.xcodeproj     # SPM projects open the .xcodeproj directly — there is no workspace
 ```
 
-The `Podfile` pins the SDK to a compatible range:
-
-```ruby
-pod 'binoban', '~> 0.1'
-```
+On first open, Xcode fetches the package and its XCFramework. If resolution stalls, use
+**File → Packages → Resolve Package Versions**. To integrate the SDK into your own app,
+add the same package via **File → Add Package Dependencies…** and point it at
+`https://github.com/binoban/binoban-sdk-swift`.
 
 ## Usage
 

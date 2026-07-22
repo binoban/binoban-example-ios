@@ -10,10 +10,9 @@ xcuserdata/
 build/
 DerivedData/
 
-# CocoaPods — run `pod install` after cloning (regenerates ios.xcworkspace)
-Pods/
-/ios.xcworkspace/
+# Swift Package Manager — Xcode re-resolves packages on open
+.swiftpm/
 
-# Local SDK binary (the SDK is pulled via CocoaPods, not committed)
+# Local SDK binary (the SDK is pulled via Swift Package Manager, not committed)
 binoban.xcframework/
 *.xcframework/
