@@ -61,7 +61,7 @@ add the same package via **File → Add Package Dependencies…** and point it a
 2. In `ios/iosApp.swift`, replace the placeholders:
 
 ```swift
-analytics = BinobanFactory.shared.create(
+binoban = BinobanFactory.shared.create(
     apiKey: "YOUR_API_KEY",
     sourceIdentifier: "YOUR_SOURCE_IDENTIFIER"
 ) { config in
@@ -78,13 +78,13 @@ analytics = BinobanFactory.shared.create(
 import binoban
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var analytics: Binoban!
+    var binoban: Binoban!
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        analytics = BinobanFactory.shared.create(
+        binoban = BinobanFactory.shared.create(
             apiKey: "YOUR_API_KEY",
             sourceIdentifier: "YOUR_SOURCE_IDENTIFIER"
         ) { config in
@@ -99,10 +99,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 Key methods:
 
 ```swift
-analytics.track(name: "purchase", properties: ["item": "shoes", "price": "49.99"])
-analytics.identify(userId: "user-123", traits: ["email": "user@example.com"])
-analytics.flush()
-analytics.reset()
+binoban.track(name: "purchase", properties: ["item": "shoes", "price": "49.99"])
+binoban.identify(userId: "user-123", traits: ["email": "user@example.com"])
+binoban.flush()
+binoban.reset()
 ```
 
 ## Objective-C integration
@@ -117,7 +117,7 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 #import <binoban/binoban.h>
 
 @interface AppDelegate ()
-@property (nonatomic, strong) BinobanBinoban *analytics;
+@property (nonatomic, strong) BinobanBinoban *binoban;
 @end
 
 @implementation AppDelegate
@@ -125,7 +125,7 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    self.analytics = [BinobanFactory.shared
+    self.binoban = [BinobanFactory.shared
         createApiKey:@"YOUR_API_KEY"
         sourceIdentifier:@"YOUR_SOURCE_IDENTIFIER"
         configs:^(BinobanConfiguration *config) {
@@ -142,10 +142,10 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 **Key method calls**
 
 ```objc
-[self.analytics trackName:@"purchase" properties:@{ @"item": @"shoes", @"price": @"49.99" }];
-[self.analytics identifyUserId:@"user-123" traits:@{ @"email": @"user@example.com" }];
-[self.analytics flush];
-[self.analytics reset];
+[self.binoban trackName:@"purchase" properties:@{ @"item": @"shoes", @"price": @"49.99" }];
+[self.binoban identifyUserId:@"user-123" traits:@{ @"email": @"user@example.com" }];
+[self.binoban flush];
+[self.binoban reset];
 ```
 
 ## Push notifications

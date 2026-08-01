@@ -3,7 +3,7 @@ import binoban
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     static private(set) var instance: AppDelegate! = nil
-    var analytics: Binoban!
+    var binoban: Binoban!
 
     func application(
         _ application: UIApplication,
@@ -12,7 +12,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Request your credentials and deployment host from support@binoban.io and
         // replace the placeholders below. For Binoban-hosted accounts apiHost is
         // "api.binoban.io"; on-prem / white-label deployments use their own host.
-        analytics = BinobanFactory.shared.create(
+        binoban = BinobanFactory.shared.create(
             apiKey: "YOUR_API_KEY",
             sourceIdentifier: "YOUR_SOURCE_IDENTIFIER"
         ) { config in
@@ -21,32 +21,32 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
 
         Binoban.companion.debugLogsEnabled = true
-        print(">>>>>>>>>>>>> anonymousId:" + analytics.anonymousId())
+        print(">>>>>>>>>>>>> anonymousId:" + binoban.anonymousId())
 
         AppDelegate.instance = self
         return true
     }
 
-    func flush() { analytics.flush() }
-    func reset() { analytics.reset() }
-    func track(name: String, properties: [String: Any]) { analytics.track(name: name, properties: properties) }
-    func identify(userId: String, traits: [String: Any]) { analytics.identify(userId: userId, traits: traits) }
+    func flush() { binoban.flush() }
+    func reset() { binoban.reset() }
+    func track(name: String, properties: [String: Any]) { binoban.track(name: name, properties: properties) }
+    func identify(userId: String, traits: [String: Any]) { binoban.identify(userId: userId, traits: traits) }
 
     // Settings — runtime-changeable
     func setDebugLogs(_ enabled: Bool) { Binoban.companion.debugLogsEnabled = enabled }
     func getDebugLogs() -> Bool { Binoban.companion.debugLogsEnabled }
-    func setSdkEnabled(_ enabled: Bool) { analytics.enabled = enabled }
-    func getSdkEnabled() -> Bool { analytics.enabled }
-    func setFlushAt(_ value: Int) { analytics.configuration.flushAt = Int32(value) }
-    func getFlushAt() -> Int { Int(analytics.configuration.flushAt) }
-    func setFlushInterval(_ value: Int) { analytics.configuration.flushInterval = Int32(value) }
-    func getFlushInterval() -> Int { Int(analytics.configuration.flushInterval) }
+    func setSdkEnabled(_ enabled: Bool) { binoban.enabled = enabled }
+    func getSdkEnabled() -> Bool { binoban.enabled }
+    func setFlushAt(_ value: Int) { binoban.configuration.flushAt = Int32(value) }
+    func getFlushAt() -> Int { Int(binoban.configuration.flushAt) }
+    func setFlushInterval(_ value: Int) { binoban.configuration.flushInterval = Int32(value) }
+    func getFlushInterval() -> Int { Int(binoban.configuration.flushInterval) }
 
     // Settings — read-only info
-    func getApiHost() -> String { analytics.configuration.apiHost }
-    func getCollectDeviceId() -> Bool { analytics.configuration.collectDeviceId }
-    func getTrackLifecycleEvents() -> Bool { analytics.configuration.trackApplicationLifecycleEvents }
-    func getAnonymousId() -> String { analytics.anonymousId() }
+    func getApiHost() -> String { binoban.configuration.apiHost }
+    func getCollectDeviceId() -> Bool { binoban.configuration.collectDeviceId }
+    func getTrackLifecycleEvents() -> Bool { binoban.configuration.trackApplicationLifecycleEvents }
+    func getAnonymousId() -> String { binoban.anonymousId() }
 }
 
 @main
