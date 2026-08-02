@@ -6,7 +6,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/binoban/binoban-sdk-swift",
       "state" : {
-        "revision" : "d1f4f5dee2d46a1baf4c3505708dd767c993cba7",
+        "revision" : "475e43f036452a6f27fafe70ae137e2aec5aa11f",
         "version" : "1.1.0"
       }
     }
