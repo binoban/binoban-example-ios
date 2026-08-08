@@ -16,3 +16,7 @@ DerivedData/
 # Local SDK binary (the SDK is pulled via Swift Package Manager, not committed)
 binoban.xcframework/
 *.xcframework/
+
+# Firebase credential — never commit. Each developer drops their own
+# GoogleService-Info.plist into ios/ to enable push notifications.
+GoogleService-Info.plist

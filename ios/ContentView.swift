@@ -3,6 +3,7 @@ import SwiftUI
 enum DemoTab: String, CaseIterable {
     case track = "Track"
     case identify = "Identify"
+    case push = "Push"
     case settings = "Settings"
 }
 
@@ -30,25 +31,30 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 ForEach(DemoTab.allCases, id: \.self) { tab in
                     Button(tab.rawValue.uppercased()) {
-                        if tab == .settings { loadSettings() }
-                        else { eventName = ""; fields = [] }
+                        switch tab {
+                        case .settings: loadSettings()
+                        case .push: break
+                        default: eventName = ""; fields = []
+                        }
                         selectedTab = tab
                     }
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity)
                     .background(selectedTab == tab ? Color.accentColor : Color.clear)
                     .foregroundColor(selectedTab == tab ? .white : .accentColor)
-                    .font(.body.weight(selectedTab == tab ? .bold : .regular))
+                    .font(.footnote.weight(selectedTab == tab ? .bold : .regular))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 }
             }
             .background(Color(.systemGray6))
             .cornerRadius(8)
             .padding(.horizontal)
 
-            if selectedTab == .settings {
-                settingsPanel
-            } else {
-                eventForm
+            switch selectedTab {
+            case .settings: settingsPanel
+            case .push: ScrollView { PushPanel() }
+            default: eventForm
             }
 
             Spacer()
@@ -61,7 +67,7 @@ struct ContentView: View {
     private var settingsPanel: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                sectionHeader("Runtime Controls")
+                SectionHeader("Runtime Controls")
 
                 settingsToggleRow("Debug Logs", binding: Binding(
                     get: { debugLogs },
@@ -93,45 +99,20 @@ struct ContentView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 10)
 
-                sectionHeader("Read-only Info")
+                SectionHeader("Read-only Info")
 
-                infoRow("API Host", AppDelegate.instance.getApiHost())
-                infoRow("Collect Device ID", AppDelegate.instance.getCollectDeviceId() ? "true" : "false")
-                infoRow("Track Lifecycle Events", AppDelegate.instance.getTrackLifecycleEvents() ? "true" : "false")
-                infoRow("Anonymous ID", AppDelegate.instance.getAnonymousId())
+                InfoRow("API Host", AppDelegate.instance.getApiHost())
+                InfoRow("Collect Device ID", AppDelegate.instance.getCollectDeviceId() ? "true" : "false")
+                InfoRow("Track Lifecycle Events", AppDelegate.instance.getTrackLifecycleEvents() ? "true" : "false")
+                InfoRow("Anonymous ID", AppDelegate.instance.getAnonymousId())
             }
         }
-    }
-
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title.uppercased())
-            .font(.caption2)
-            .fontWeight(.semibold)
-            .foregroundColor(.secondary)
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 4)
     }
 
     private func settingsToggleRow(_ label: String, binding: Binding<Bool>) -> some View {
         Toggle(label, isOn: binding)
             .padding(.horizontal)
             .padding(.vertical, 10)
-    }
-
-    private func infoRow(_ label: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Text(value)
-                .font(.system(.footnote, design: .monospaced))
-                .foregroundColor(.primary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .overlay(Divider().padding(.horizontal), alignment: .bottom)
     }
 
     // MARK: - Event form
@@ -217,7 +198,7 @@ struct ContentView: View {
         case .identify:
             AppDelegate.instance.identify(userId: eventName, traits: props)
             payload = ["type": "identify", "userId": eventName, "traits": props]
-        case .settings:
+        case .push, .settings:
             return
         }
         if let data = try? JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted, .sortedKeys]),

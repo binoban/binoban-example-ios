@@ -1,7 +1,8 @@
 import SwiftUI
+import UserNotifications
 import binoban
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     static private(set) var instance: AppDelegate! = nil
     var binoban: Binoban!
 
@@ -24,6 +25,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         print(">>>>>>>>>>>>> anonymousId:" + binoban.anonymousId())
 
         AppDelegate.instance = self
+
+        // Push is opt-in and resolved at compile time: with FirebaseMessaging linked this
+        // configures Firebase and wires the delegates below; without it this is a no-op
+        // and the Push tab shows how to turn it on. See README § Push notifications.
+        PushIntegrations.current.start(application: application, notificationDelegate: self)
+
         return true
     }
 
@@ -47,6 +54,66 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func getCollectDeviceId() -> Bool { binoban.configuration.collectDeviceId }
     func getTrackLifecycleEvents() -> Bool { binoban.configuration.trackApplicationLifecycleEvents }
     func getAnonymousId() -> String { binoban.anonymousId() }
+
+    // MARK: - Push forwarding
+    //
+    // The SDK never registers its own UNUserNotificationCenterDelegate — this app owns it
+    // and forwards. These callbacks touch no Firebase type, so they stay in the default
+    // build as a readable reference; they simply never fire until push is enabled.
+    // Recipe: https://docs.binoban.io/developers/engage/mobile-push-ios
+
+    /// Raw APNs token. It goes to Firebase, **never** to Binoban — Binoban sends through
+    /// FCM, so an APNs device token cannot reach the device. Binoban gets the FCM token
+    /// from `MessagingDelegate` instead.
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        PushIntegrations.current.setAPNsToken(deviceToken)
+    }
+
+    /// Incoming data push — this is what displays a Binoban notification. Firebase
+    /// flattens a data message's keys onto `userInfo`, so `source` sits at its top level.
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        if userInfo["source"] as? String == "binoban" {
+            BinobanNotifications.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
+        } else {
+            // your own push handling goes here
+        }
+        completionHandler(.newData)
+    }
+
+    /// Foreground presentation — reports `delivered`.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        BinobanNotifications.shared.onWillPresentForwarded(userInfo: notification.request.content.userInfo)
+        completionHandler([.banner, .sound])
+    }
+
+    /// User interaction — reports `clicked`, or `closed` on a swipe-away.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let actionId = response.actionIdentifier == UNNotificationDefaultActionIdentifier
+            ? nil : response.actionIdentifier
+        let dismissed = response.actionIdentifier == UNNotificationDismissActionIdentifier
+
+        BinobanNotifications.shared.onDidReceiveForwarded(
+            userInfo: response.notification.request.content.userInfo,
+            actionId: actionId,
+            dismissed: dismissed
+        )
+        completionHandler()
+    }
 }
 
 @main

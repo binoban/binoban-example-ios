@@ -17,6 +17,7 @@ identity APIs you use to send customer signals into a Binoban deployment.
 | **Identify** | Identify a user by ID with custom traits |
 | **Flush** | Immediately dispatch any buffered events to the server |
 | **Reset** | Clear the current user identity and reset SDK state |
+| **Push** | Opt-in Firebase Cloud Messaging integration — token registration, notification display, and interaction reporting (tap / dismiss / customData) |
 | **Settings** | Toggle debug logs / SDK enabled, adjust `flushAt` & `flushInterval`, view read-only config |
 | **JSON display** | See the exact payload sent for each call |
 
@@ -150,8 +151,104 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 
 ## Push notifications
 
-Push notification support requires an Apple Developer account with APNs entitlements.
-Contact Binoban customer support for setup instructions once your provisioning is ready.
+Push runs on Firebase Cloud Messaging and is **opt-in**. The default project declares
+no Firebase dependency and carries no `GoogleService-Info.plist`, so it builds and runs
+as-is — the **Push** tab shows the enable steps. Turning it on requires your own
+Firebase project and an Apple Developer account with APNs configured; Binoban does not
+wrap Firebase.
+
+> The integration here mirrors the recipe in the public docs:
+> [App push on iOS](https://docs.binoban.io/developers/engage/mobile-push-ios).
+> That page is the source of truth — read it for the why behind each step, and
+> [Set up Firebase for Binoban push](https://docs.binoban.io/developers/engage/firebase-setup)
+> for the APNs key upload.
+
+### Enable push in this example
+
+1. **Link FirebaseMessaging.** **File → Add Package Dependencies…** →
+   `https://github.com/firebase/firebase-ios-sdk`, and add the **FirebaseMessaging**
+   product to the `ios` target.
+
+   The Swift source branches on `#if canImport(FirebaseMessaging)`, so linking the
+   package is the single switch that turns push on. Nothing else needs editing.
+
+2. **Add your Firebase config.** Download `GoogleService-Info.plist` for the iOS app
+   (bundle id `io.binoban.sdk.demo.ios`) from your Firebase console and add it to the
+   `ios/` folder. It is gitignored — never commit it.
+
+3. **Enable the capabilities.** In **Signing & Capabilities**, add **Push
+   Notifications** and **Background Modes → Remote notifications**. Background Modes
+   is required: Binoban's messages are data-only, and without it iOS will not wake the
+   app to display them.
+
+4. **Run on a physical device.** Push needs an APNs token, which the simulator does
+   not provide.
+
+Without the package the project still builds with zero Firebase setup. Adding the
+package but not the `.plist` also builds — the Push tab then reports the missing
+config rather than crashing on `FirebaseApp.configure()`.
+
+### How the push path is wired
+
+Firebase-touching code is confined to the `canImport` branch of
+`ios/Push/PushBootstrap.swift`, so the default build never references a Firebase type.
+The wiring follows the [documented steps](https://docs.binoban.io/developers/engage/mobile-push-ios):
+
+1. **Initialize at launch**, before any push can arrive:
+   ```swift
+   BinobanNotifications.shared.initializeNotifications(
+       configuration: NotificationPlatformConfigurationIos(
+           askNotificationPermissionOnStart: false,
+           notificationSoundName: nil
+       )
+   )
+   ```
+   This example passes `false` and asks for permission from the Push tab instead —
+   usually the better experience. Pass `true` to have the SDK ask on start.
+
+2. **Register the FCM token** from Firebase's `MessagingDelegate`:
+   ```swift
+   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+       guard let token = fcmToken else { return }
+       BinobanNotifications.shared.onNewToken(token: token)
+   }
+   ```
+   Binoban wants the **FCM registration token**, not the raw APNs device token — the
+   APNs token goes to Firebase (`Messaging.messaging().apnsToken`) and never to
+   Binoban.
+
+3. **Forward the notification callbacks.** The SDK never registers its own
+   `UNUserNotificationCenterDelegate`; `AppDelegate` owns it and forwards
+   `onApplicationDidReceiveRemoteNotification` (displays the notification),
+   `onWillPresentForwarded` (reports `delivered`), and `onDidReceiveForwarded`
+   (reports `clicked` / `closed`). Assigning
+   `UNUserNotificationCenter.current().delegate` and calling
+   `registerForRemoteNotifications()` are what make those callbacks fire at all.
+
+4. **Bootstrap the token you already have.** `didReceiveRegistrationToken` only fires
+   on token generation and rotation, so the Push tab fetches the existing FCM token
+   once and hands it to `onNewToken` — covering devices that were already installed
+   before push was added.
+
+A `DefaultNotificationInteractionHandler` subclass (`LoggingInteractionHandler`) calls
+`super` (so SDK tracking still fires) and mirrors each interaction into the Push tab's
+"Recent interactions" list. **The SDK does not open URLs on iOS** — for your own app,
+route `interaction.uri` and `interaction.customData` through your navigation instead of
+just logging them. See
+[Route the tap yourself](https://docs.binoban.io/developers/engage/mobile-push-ios#5-route-the-tap-yourself).
+
+### Verify it worked
+
+1. After launch, your next flushed batch carries a `bb_notification_registered` event
+   with the token (tap **Re-fetch FCM token** in the Push tab to force it).
+2. Send a test campaign from the Binoban panel. The notification appears,
+   `bb_notification_delivered` follows, and tapping it produces
+   `bb_notification_clicked` — the Push tab mirrors each interaction. Keep the app in
+   the foreground for this check: on iOS `delivered` is reported from the
+   foreground-presentation callback.
+
+See [Push events](https://docs.binoban.io/developers/reference/events/push-events) for
+the full event list and payload keys.
 
 ## Documentation
 
