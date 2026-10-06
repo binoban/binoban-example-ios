@@ -7,7 +7,7 @@ Binoban is enterprise CDXP infrastructure for customer data, activation, retail 
 advertising, and decisioning. This example demonstrates the client-side event and
 identity APIs you use to send customer signals into a Binoban deployment.
 
-> **Status:** Reference example · tested against Binoban iOS SDK **1.1.0**.
+> **Status:** Reference example · tested against Binoban iOS SDK **1.3.0**.
 
 ## What it shows
 
@@ -37,7 +37,7 @@ The SDK is distributed as a Swift package that vends a prebuilt XCFramework
 This example already declares the dependency, pinned to an exact version:
 
 ```
-https://github.com/binoban/binoban-sdk-swift · Exact Version · 1.1.0
+https://github.com/binoban/binoban-sdk-swift · Exact Version · 1.3.0
 ```
 
 Just open the project and let Xcode resolve packages:
