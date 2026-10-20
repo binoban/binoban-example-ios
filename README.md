@@ -1,65 +1,43 @@
-# Binoban iOS SDK — Example App
+<img src="https://raw.githubusercontent.com/binoban/.github/63ddb277b487b407613e98205a324d4fc6b1019c/profile/binoban-star-indigo-on-white.png" alt="Binoban indigo star" width="72" height="72">
 
-A minimal SwiftUI reference app showing how to integrate the **Binoban SDK** into an
-iOS project.
+# Binoban iOS Reference App
 
-Binoban is enterprise CDXP infrastructure for customer data, activation, retail media,
-advertising, and decisioning. This example demonstrates the client-side event and
-identity APIs you use to send customer signals into a Binoban deployment.
+Explore customer event tracking, user identification, and optional push integration in a native iOS app built with SwiftUI.
 
-> **Status:** Reference example · tested against Binoban iOS SDK **1.3.0**.
+[Example app guide](https://docs.binoban.io/developers/reference/example-apps) · [Swift package](https://github.com/binoban/binoban-sdk-swift) · [Push guide](https://docs.binoban.io/developers/engage/mobile-push-ios)
 
-## What it shows
+## What this repository provides
 
-| Feature | Description |
-|---|---|
-| **Track** | Send a named event with custom key-value properties |
-| **Identify** | Identify a user by ID with custom traits |
-| **Flush** | Immediately dispatch any buffered events to the server |
-| **Reset** | Clear the current user identity and reset SDK state |
-| **Push** | Opt-in Firebase Cloud Messaging integration — token registration, notification display, and interaction reporting (tap / dismiss / customData) |
-| **Settings** | Toggle debug logs / SDK enabled, adjust `flushAt` & `flushInterval`, view read-only config |
-| **JSON display** | See the exact payload sent for each call |
+A reference app that consumes the Binoban iOS SDK through Swift Package Manager, pinned to `1.3.0`. Use it to inspect client calls and configuration, then apply the integration pattern to your own app.
 
-## Supported environments
+## Requirements
 
-- **Binoban iOS SDK:** iOS **12.0+**. You can lower this example's deployment target to
-  match your app's minimum supported OS, down to iOS 12.0.
-- **This example app:** builds against a deployment target of iOS **15.0**.
-- **Xcode 15 or later** (Swift tools 5.9+).
-- [Swift Package Manager](https://www.swift.org/package-manager/) for dependency
-  management (built into Xcode — nothing extra to install).
+| Component | Requirement |
+| --- | --- |
+| IDE | Xcode 15+ on macOS; Swift tools 5.9+ |
+| Reference app target | iOS 15.0+ |
+| SDK minimum | iOS 12.0+ |
+| Dependency manager | Swift Package Manager, included with Xcode |
+| Configuration | Source API key, source identifier, and deployment API host |
+| Optional push | Your Firebase project, APNs configuration, and app capabilities |
 
-## Installation
+The example app's iOS target is higher than the SDK's minimum. Changing that target also requires checking the app's SwiftUI API availability.
 
-The SDK is distributed as a Swift package that vends a prebuilt XCFramework
-([github.com/binoban/binoban-sdk-swift](https://github.com/binoban/binoban-sdk-swift)).
-This example already declares the dependency, pinned to an exact version:
+## Get started
 
-```
-https://github.com/binoban/binoban-sdk-swift · Exact Version · 1.3.0
-```
+### 1. Open the project
 
-Just open the project and let Xcode resolve packages:
+Clone this repository, then open the Xcode project:
 
 ```sh
-open ios.xcodeproj     # SPM projects open the .xcodeproj directly — there is no workspace
+open ios.xcodeproj
 ```
 
-On first open, Xcode fetches the package and its XCFramework. If resolution stalls, use
-**File → Packages → Resolve Package Versions**. To integrate the SDK into your own app,
-add the same package via **File → Add Package Dependencies…** and point it at
-`https://github.com/binoban/binoban-sdk-swift`.
+Xcode resolves the existing package dependency and downloads its XCFramework. If resolution stalls, choose **File > Packages > Resolve Package Versions**.
 
-## Usage
+### 2. Configure your deployment
 
-1. Request your credentials and deployment host from **support@binoban.io**:
-   - **API Key** (`apiKey`)
-   - **Source Identifier** (`sourceIdentifier`)
-   - **API Host** (`apiHost`) — `api.binoban.io` for Binoban-hosted accounts; on-prem /
-     white-label deployments use their own host.
-
-2. In `ios/iosApp.swift`, replace the placeholders:
+Request your API key, source identifier, and API host from [tech@binoban.io](mailto:tech@binoban.io). Replace the placeholders in [ios/iosApp.swift](ios/iosApp.swift):
 
 ```swift
 binoban = BinobanFactory.shared.create(
@@ -71,11 +49,34 @@ binoban = BinobanFactory.shared.create(
 }
 ```
 
-3. Select a simulator or device and press **Run**.
+Use the host supplied for your deployment. On-premise and white-label deployments use their own endpoint.
+
+### 3. Run the app
+
+Select a simulator or device and press **Run**. Select your signing team when running on a physical device. Firebase setup is optional; the default project contains no Firebase dependency.
+
+## Explore the example
+
+| Feature | What you can explore |
+| --- | --- |
+| Track | Named events with custom properties |
+| Identify | User IDs and custom traits |
+| Flush | Request delivery of buffered events |
+| Reset | Clear the current identity and reset SDK state |
+| Settings | Debug logs, SDK enablement, flush thresholds, and configuration |
+| JSON display | Inspect the inputs for each call |
+| Push | Optional FCM token registration, display, and interaction reporting |
+
+## Verify your integration
+
+Use **Track**, then **Flush**. Check the SDK logs and confirm event acceptance using the [Developer Quick Start](https://docs.binoban.io/developers/quickstart). The JSON display shows call inputs; it is not a delivery receipt.
+
+If no events arrive, check the source credentials and `apiHost`. For push, follow the device, delegate, and Firebase checks below. For ATT and privacy manifest guidance, see the [iOS SDK README](https://github.com/binoban/binoban-sdk-swift#privacy-manifest).
 
 ## SDK integration pattern
 
 ```swift
+import UIKit
 import binoban
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -100,7 +101,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 Key methods:
 
 ```swift
-binoban.track(name: "purchase", properties: ["item": "shoes", "price": "49.99"])
+binoban.track(name: "Order Completed", properties: ["item": "shoes", "price": "49.99"])
 binoban.identify(userId: "user-123", traits: ["email": "user@example.com"])
 binoban.flush()
 binoban.reset()
@@ -143,7 +144,7 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 **Key method calls**
 
 ```objc
-[self.binoban trackName:@"purchase" properties:@{ @"item": @"shoes", @"price": @"49.99" }];
+[self.binoban trackName:@"Order Completed" properties:@{ @"item": @"shoes", @"price": @"49.99" }];
 [self.binoban identifyUserId:@"user-123" traits:@{ @"email": @"user@example.com" }];
 [self.binoban flush];
 [self.binoban reset];
@@ -151,15 +152,14 @@ The SDK framework is fully Objective-C compatible. KMP exports all public types 
 
 ## Push notifications
 
-Push runs on Firebase Cloud Messaging and is **opt-in**. The default project declares
-no Firebase dependency and carries no `GoogleService-Info.plist`, so it builds and runs
-as-is — the **Push** tab shows the enable steps. Turning it on requires your own
+Push runs on Firebase Cloud Messaging and is **optional**. The default project declares
+no Firebase dependency and carries no `GoogleService-Info.plist`, so it can run without Firebase setup. The **Push** tab shows the enable steps. Turning it on requires your own
 Firebase project and an Apple Developer account with APNs configured; Binoban does not
 wrap Firebase.
 
 > The integration here mirrors the recipe in the public docs:
 > [App push on iOS](https://docs.binoban.io/developers/engage/mobile-push-ios).
-> That page is the source of truth — read it for the why behind each step, and
+> That page is the source of truth: read it for the why behind each step, and
 > [Set up Firebase for Binoban push](https://docs.binoban.io/developers/engage/firebase-setup)
 > for the APNs key upload.
 
@@ -174,18 +174,17 @@ wrap Firebase.
 
 2. **Add your Firebase config.** Download `GoogleService-Info.plist` for the iOS app
    (bundle id `io.binoban.sdk.demo.ios`) from your Firebase console and add it to the
-   `ios/` folder. It is gitignored — never commit it.
+   `ios/` folder. It is gitignored: never commit it.
 
 3. **Enable the capabilities.** In **Signing & Capabilities**, add **Push
    Notifications** and **Background Modes → Remote notifications**. Background Modes
    is required: Binoban's messages are data-only, and without it iOS will not wake the
    app to display them.
 
-4. **Run on a physical device.** Push needs an APNs token, which the simulator does
-   not provide.
+4. **Run on a physical device.** Use a physical device for end-to-end validation of this example's APNs and FCM flow.
 
 Without the package the project still builds with zero Firebase setup. Adding the
-package but not the `.plist` also builds — the Push tab then reports the missing
+package but not the `.plist` also builds: the Push tab then reports the missing
 config rather than crashing on `FirebaseApp.configure()`.
 
 ### How the push path is wired
@@ -203,7 +202,7 @@ The wiring follows the [documented steps](https://docs.binoban.io/developers/eng
        )
    )
    ```
-   This example passes `false` and asks for permission from the Push tab instead —
+   This example passes `false` and asks for permission from the Push tab instead:
    usually the better experience. Pass `true` to have the SDK ask on start.
 
 2. **Register the FCM token** from Firebase's `MessagingDelegate`:
@@ -213,7 +212,7 @@ The wiring follows the [documented steps](https://docs.binoban.io/developers/eng
        BinobanNotifications.shared.onNewToken(token: token)
    }
    ```
-   Binoban wants the **FCM registration token**, not the raw APNs device token — the
+   Binoban wants the **FCM registration token**, not the raw APNs device token: the
    APNs token goes to Firebase (`Messaging.messaging().apnsToken`) and never to
    Binoban.
 
@@ -227,12 +226,12 @@ The wiring follows the [documented steps](https://docs.binoban.io/developers/eng
 
 4. **Bootstrap the token you already have.** `didReceiveRegistrationToken` only fires
    on token generation and rotation, so the Push tab fetches the existing FCM token
-   once and hands it to `onNewToken` — covering devices that were already installed
+   once and hands it to `onNewToken`: covering devices that were already installed
    before push was added.
 
 A `DefaultNotificationInteractionHandler` subclass (`LoggingInteractionHandler`) calls
 `super` (so SDK tracking still fires) and mirrors each interaction into the Push tab's
-"Recent interactions" list. **The SDK does not open URLs on iOS** — for your own app,
+"Recent interactions" list. **The SDK does not open URLs on iOS**: for your own app,
 route `interaction.uri` and `interaction.customData` through your navigation instead of
 just logging them. See
 [Route the tap yourself](https://docs.binoban.io/developers/engage/mobile-push-ios#5-route-the-tap-yourself).
@@ -243,23 +242,35 @@ just logging them. See
    with the token (tap **Re-fetch FCM token** in the Push tab to force it).
 2. Send a test campaign from the Binoban panel. The notification appears,
    `bb_notification_delivered` follows, and tapping it produces
-   `bb_notification_clicked` — the Push tab mirrors each interaction. Keep the app in
+   `bb_notification_clicked`: the Push tab mirrors each interaction. Keep the app in
    the foreground for this check: on iOS `delivered` is reported from the
    foreground-presentation callback.
 
 See [Push events](https://docs.binoban.io/developers/reference/events/push-events) for
 the full event list and payload keys.
 
-## Documentation
+## Documentation and support
 
-- Developer documentation: [docs.binoban.io](https://docs.binoban.io)
-- Website: [binoban.io](https://binoban.io)
+- [Integration guide](https://docs.binoban.io/developers/reference/example-apps)
+- [Developer Quick Start](https://docs.binoban.io/developers/quickstart)
+- [Report a bug or request a feature](https://github.com/binoban/binoban-example-ios/issues)
+- [Contribution guide](CONTRIBUTING.md)
+- Deployment access, credentials, and host configuration: [tech@binoban.io](mailto:tech@binoban.io).
 
 ## Security
 
-Please report security issues privately to **security@binoban.io**. See
-[SECURITY.md](SECURITY.md). Do not open public issues for vulnerabilities.
+Report vulnerabilities privately through the [security policy](SECURITY.md). Use placeholders when sharing configuration or reproduction steps.
 
 ## License
 
-Released under the [MIT License](LICENSE), matching the Binoban iOS SDK.
+MIT. See [LICENSE](LICENSE).
+
+## About Binoban
+
+Binoban provides enterprise Customer Data Experience Platform (CDXP) infrastructure that connects customer data with prediction, decisioning, and activation across customer engagement, retail media, and advertising.
+
+**Seer. Protector. Builder.** See the signal. Recognize risks and opportunities. Build what comes next.
+
+[Binoban](https://binoban.io) · [Developer documentation](https://docs.binoban.io) · [GitHub organization](https://github.com/binoban)
+
+**Future In Your Hands**
