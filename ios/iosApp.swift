@@ -10,7 +10,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Request your credentials and deployment host from support@binoban.io and
+        // Request your credentials and deployment host from tech@binoban.io and
         // replace the placeholders below. For Binoban-hosted accounts apiHost is
         // "api.binoban.io"; on-prem / white-label deployments use their own host.
         binoban = BinobanFactory.shared.create(
